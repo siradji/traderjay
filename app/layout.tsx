@@ -10,7 +10,11 @@ export default function RootLayout({
     <html>
       <head></head>
       <body>
-        <main className={styles.main}>{children}</main>
+        <main className={styles.main}>
+          <div style={{ width: "100%" }}>
+          {children}
+          </div>
+        </main>
       </body>
     </html>
   );

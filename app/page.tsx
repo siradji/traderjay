@@ -6,7 +6,7 @@ const styles = {
   container: {
     margin: "auto",
     paddingTop: "6rem",
-    maxWidth: "90%",
+    maxWidth: "80%",
     color: "#6b7280"
   },
   title: {
@@ -100,24 +100,24 @@ export default function Arbitrage() {
                 {opportunity.profitability.toFixed(2)}%
               </div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem", marginTop: "1.5rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1.5rem" }}>
               <div>
                 <h4 style={styles.cardSubtitle}>Buy on {opportunity.highest.exchange}</h4>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                   <span style={{ ...styles.cardSubtitle, color: "#6b7280" }}>Price</span>
                   <span style={styles.cardValue}>{opportunity.highest.price.toFixed(8)}</span>
-                  </div>
-                  <div style={{ marginTop: "1em" }}>
+                </div>
+             </div>
+                <div style={{ marginTop: "1em" }}>
                 <h4 style={styles.cardSubtitle}>Sell on {opportunity.lowest.exchange}</h4>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                   <span style={{ ...styles.cardSubtitle, color: "#6b7280" }}>Price</span>
                   <span style={styles.cardValue}>{opportunity.lowest.price.toFixed(8)}</span>
                   </div>
-                  </div>
+                </div>
                  
             </div>
           </div>
-        </div>
         
         ))
       ) : (
