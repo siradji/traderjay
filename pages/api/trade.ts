@@ -126,16 +126,12 @@ class TradeModule implements TradeI {
     return tradeData;
   }
 
-
-   async fetchTrade( minProfitibility: number = 5 , maxProfitibility: number = 10):Promise<Arbitrage[]> {
-
-    const tradeData = await this.getTradeData()
-
+  async fetchTrade(minProfitibility: number = 15, maxProfitibility: number = 55): Promise<Arbitrage[]> {
+    const tradeData = await this.getTradeData();
     const arbitrageOpportunities: Arbitrage[] = [];
-
+  
     for (const ticker in tradeData) {
       const exchanges = Object.keys(tradeData[ticker]);
-  
       if (exchanges.length < 2) {
         continue;
       }
@@ -144,6 +140,15 @@ class TradeModule implements TradeI {
         for (let j = i + 1; j < exchanges.length; j++) {
           const exchangeA = exchanges[i];
           const exchangeB = exchanges[j];
+          const networkA = exchangeA.toLowerCase().includes("erc20")
+            ? exchangeA.slice(0, -5)
+            : exchangeA;
+          const networkB = exchangeB.toLowerCase().includes("erc20")
+            ? exchangeB.slice(0, -5)
+            : exchangeB;
+          if (networkA !== networkB) {
+            continue;
+          }
   
           const priceA = tradeData[ticker][exchangeA];
           const priceB = tradeData[ticker][exchangeB];
@@ -151,20 +156,30 @@ class TradeModule implements TradeI {
           if (priceA && priceB) {
             const profitability = (priceB / priceA - 1) * 100;
   
-            if(profitability < 1) continue;
+            if (profitability < minProfitibility || profitability > maxProfitibility) {
+              continue;
+            }
   
-            if(profitability > 500) continue;
-            
+            const minProfit = priceA * 0.1;
+            if (priceB < minProfit + priceA) {
+              continue;
+            }
+  
             const highest = priceA > priceB ? { exchange: exchangeA, price: priceA } : { exchange: exchangeB, price: priceB };
             const lowest = priceA > priceB ? { exchange: exchangeB, price: priceB } : { exchange: exchangeA, price: priceA };
-  
-            arbitrageOpportunities.push({ highest, lowest , profitability, ticker}, );
+            arbitrageOpportunities.push({
+              highest,
+              lowest,
+              profitability,
+              ticker,
+            });
           }
         }
       }
     }
   
-   return arbitrageOpportunities
+    return arbitrageOpportunities;
   }
+  
 }
 
