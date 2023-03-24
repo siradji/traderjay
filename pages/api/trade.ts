@@ -127,12 +127,6 @@ class TradeModule implements TradeI {
   
       for (let i = 0; i < exchanges.length - 1; i++) {
         for (let j = i + 1; j < exchanges.length; j++) {
-          const exchangeA = exchanges[i];
-          const exchangeB = exchanges[j];
-          const networkA = exchangeA.toLowerCase().includes("erc20")
-            ? exchangeA.slice(0, -5)
-            : exchangeA;
-          const networkB = ex
   
           const priceA = tradeData[ticker][exchangeA];
           const priceB = tradeData[ticker][exchangeB];
