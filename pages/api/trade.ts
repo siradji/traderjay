@@ -60,10 +60,9 @@ export default async function handler(
 
 class TradeModule implements TradeI {
   async getTradeData(): Promise<TradeData> {
-    const [kucoinRes, huobiRes, bitfinexRes, binanceRes] = await Promise.all([
+    const [kucoinRes, huobiRes, binanceRes] = await Promise.all([
       axios.get('https://api.kucoin.com/api/v1/market/allTickers'),
       axios.get('https://api.huobi.pro/market/tickers'),
-      axios.get('https://api-pub.bitfinex.com/v2/tickers?symbols=ALL'),
       axios.get('  http://api.scraperapi.com/?api_key=49fff32733b0143bec8029dd3f4c01d5&url=https://api.coingecko.com/api/v3/exchanges/binance/tickers'),
   
     ]);
@@ -95,21 +94,11 @@ class TradeModule implements TradeI {
       }
       return data;
     }, {});
-  
-    const bitfinexData =bitfinexRes.data.reduce((data: TradeData, ticker: any) => {
-      if (ticker[0].endsWith('USD') && !ticker[0].includes('TEST')) {
-        let tickerName = ticker[0].slice(0, -3)
-        tickerName = tickerName.slice(1)
-          data[tickerName] = {
-            bitfinex: parseFloat(ticker[7])
-          }
-       }
-      return data;
-    }, {});
+
   
   
     const tradeData: TradeData = {};
-    for (const exchangeData of [ huobiData, kucoinData, bitfinexData, binanceData]) {
+    for (const exchangeData of [ huobiData, kucoinData, binanceData]) {
       for (const ticker in exchangeData) {
         if (tradeData[ticker] === undefined) {
           tradeData[ticker] = {};
@@ -126,8 +115,7 @@ class TradeModule implements TradeI {
     return tradeData;
   }
 
-
-   async fetchTrade( minProfitibility: number = 5 , maxProfitibility: number = 10):Promise<Arbitrage[]> {
+  async fetchTrade( minProfitibility: number = 5 , maxProfitibility: number = 10):Promise<Arbitrage[]> {
 
     const tradeData = await this.getTradeData()
 
@@ -151,7 +139,7 @@ class TradeModule implements TradeI {
           if (priceA && priceB) {
             const profitability = (priceB / priceA - 1) * 100;
   
-            if(profitability < 1) continue;
+            if(profitability < 4) continue;
   
             if(profitability > 500) continue;
             
@@ -166,5 +154,6 @@ class TradeModule implements TradeI {
   
    return arbitrageOpportunities
   }
+  
 }
 
