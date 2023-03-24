@@ -139,7 +139,7 @@ class TradeModule implements TradeI {
           if (priceA && priceB) {
             const profitability = (priceB / priceA - 1) * 100;
   
-            if(profitability < 4) continue;
+            if(profitability < 1) continue;
   
             if(profitability > 500) continue;
             
