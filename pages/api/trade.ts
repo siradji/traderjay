@@ -115,20 +115,23 @@ class TradeModule implements TradeI {
     return tradeData;
   }
 
-  async fetchTrade(minProfitibility: number = 15, maxProfitibility: number = 55): Promise<Arbitrage[]> {
-    const tradeData = await this.getTradeData();
+  async fetchTrade( minProfitibility: number = 5 , maxProfitibility: number = 10):Promise<Arbitrage[]> {
+
+    const tradeData = await this.getTradeData()
+
     const arbitrageOpportunities: Arbitrage[] = [];
-  
+
     for (const ticker in tradeData) {
       const exchanges = Object.keys(tradeData[ticker]);
+  
       if (exchanges.length < 2) {
         continue;
       }
   
       for (let i = 0; i < exchanges.length - 1; i++) {
         for (let j = i + 1; j < exchanges.length; j++) {
-          const exchangeA = exchanges[i]
-const exchangeB = exchanges[j]
+          const exchangeA = exchanges[i];
+          const exchangeB = exchanges[j];
   
           const priceA = tradeData[ticker][exchangeA];
           const priceB = tradeData[ticker][exchangeB];
@@ -136,29 +139,20 @@ const exchangeB = exchanges[j]
           if (priceA && priceB) {
             const profitability = (priceB / priceA - 1) * 100;
   
-            if (profitability < minProfitibility || profitability > maxProfitibility) {
-              continue;
-            }
+            if(profitability < 4) continue;
   
-            const minProfit = priceA * 0.1;
-            if (priceB < minProfit + priceA) {
-              continue;
-            }
-  
+            if(profitability > 500) continue;
+            
             const highest = priceA > priceB ? { exchange: exchangeA, price: priceA } : { exchange: exchangeB, price: priceB };
             const lowest = priceA > priceB ? { exchange: exchangeB, price: priceB } : { exchange: exchangeA, price: priceA };
-            arbitrageOpportunities.push({
-              highest,
-              lowest,
-              profitability,
-              ticker,
-            });
+  
+            arbitrageOpportunities.push({ highest, lowest , profitability, ticker}, );
           }
         }
       }
     }
   
-    return arbitrageOpportunities;
+   return arbitrageOpportunities
   }
   
 }
